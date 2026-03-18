@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">12123短信读取器</string>
+    <string name="read_sms_button">读取12123短信</string>
+    <string name="start_service_button">启动后台监控</string>
+    <string name="no_data_text">暂无数据</string>
+    <string name="permission_required">需要短信读取权限</string>
+    <string name="service_running">后台监控运行中</string>
+    <string name="violation_detected">检测到违章记录</string>
+</resources>
