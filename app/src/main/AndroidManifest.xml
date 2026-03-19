@@ -52,8 +52,9 @@
         <service
             android:name=".SmsMonitorService"
             android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
+		android:exported="false" />
+	    <!-- android:foregroundServiceType="dataSync" />  -->
+	
             
     </application>
 
