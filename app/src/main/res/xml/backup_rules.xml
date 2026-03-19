@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- 完整备份规则配置 -->
+    <!-- 此文件定义了应用自动备份的包含和排除规则 -->
+    
+    <!-- 包含规则 -->
+    <include domain="sharedpref" path="."/>
+    <include domain="database" path="."/>
+    <include domain="file" path="."/>
+    <include domain="external" path="."/>
+    
+    <!-- 排除规则 -->
+    <exclude domain="sharedpref" path="debug_preferences.xml"/>
+    <exclude domain="database" path="debug.db"/>
+    <exclude domain="file" path="cache/"/>
+    <exclude domain="file" path="no_backup/"/>
+    <exclude domain="file" path="tmp/"/>
+    <exclude domain="file" path="*.log"/>
+    <exclude domain="file" path="*.tmp"/>
+    
+    <!-- 特定排除（敏感数据） -->
+    <exclude domain="database" path="sensitive_data.db"/>
+    <exclude domain="file" path="private/"/>
+</full-backup-content>

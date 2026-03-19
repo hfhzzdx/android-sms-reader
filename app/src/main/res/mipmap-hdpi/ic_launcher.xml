@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+    
+    <!-- 背景圆形 -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M36,36m-36,0a36,36 0,1 1,72 0a36,36 0,1 1,-72 0" />
+    
+    <!-- 短信图标 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M18,18h36v36h-36z" />
+    
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M22,22h28v20h-28z" />
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,26h24v2h-24z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,32h16v2h-16z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,38h12v2h-12z" />
+</vector>

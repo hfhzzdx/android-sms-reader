@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+    
+    <!-- 背景圆形（适配圆形图标） -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M36,36m-36,0a36,36 0,1 1,72 0a36,36 0,1 1,-72 0" />
+    
+    <!-- 短信图标（圆形版本） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,20h32v32h-32z"
+        android:strokeWidth="1"
+        android:strokeColor="#E3F2FD" />
+    
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M24,24h24v20h-24z" />
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M26,28h20v2h-20z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M26,34h14v2h-14z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M26,40h10v2h-10z" />
+</vector>

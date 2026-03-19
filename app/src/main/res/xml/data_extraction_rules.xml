@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <!-- 数据提取规则配置 -->
+    <!-- 此文件定义了应用数据备份和恢复的规则 -->
+    
+    <!-- 云备份配置 -->
+    <cloud-backup>
+        <!-- 排除不需要备份的文件 -->
+        <exclude domain="sharedpref" path="debug_preferences.xml"/>
+        <exclude domain="database" path="debug.db"/>
+        <exclude domain="file" path="cache/"/>
+        <exclude domain="file" path="no_backup/"/>
+        <exclude domain="file" path="tmp/"/>
+    </cloud-backup>
+    
+    <!-- 设备间传输配置 -->
+    <device-transfer>
+        <!-- 包含需要传输的数据 -->
+        <include domain="sharedpref" path="user_preferences.xml"/>
+        <include domain="database" path="sms_data.db"/>
+        <include domain="file" path="config/"/>
+    </device-transfer>
+</data-extraction-rules>
