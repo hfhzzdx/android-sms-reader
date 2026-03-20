@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvResult: TextView
     private lateinit var btnReadSms: Button
     private lateinit var btnStartService: Button
+    private lateinit var btnTestParser: Button
     
     companion object {
         private const val TAG = "MainActivity"
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         tvResult = findViewById(R.id.tv_result)
         btnReadSms = findViewById(R.id.btn_read_sms)
         btnStartService = findViewById(R.id.btn_start_service)
+        btnTestParser = findViewById(R.id.btn_test_parser)
         
         btnReadSms.setOnClickListener {
             checkAndRequestPermissions()
@@ -46,6 +48,10 @@ class MainActivity : AppCompatActivity() {
         
         btnStartService.setOnClickListener {
             startSmsMonitorService()
+        }
+        
+        btnTestParser.setOnClickListener {
+            runParserTests()
         }
         
         // 检查权限
@@ -127,15 +133,17 @@ class MainActivity : AppCompatActivity() {
             if (result.isNotEmpty()) {
                 val displayText = StringBuilder()
                 result.forEach { smsInfo ->
-                    displayText.append("时间: ${smsInfo.date}\n")
-                    displayText.append("车牌: ${smsInfo.plateNumber}\n")
-                    displayText.append("违法: ${smsInfo.violation}\n")
-                    displayText.append("内容: ${smsInfo.body}\n")
-                    displayText.append("---\n")
+                    // 使用TimeFormatter将时间戳转换为中文格式
+                    val chineseTime = TimeFormatter.formatToChineseDateTime(smsInfo.date)
+                    displayText.append("📅 时间: $chineseTime\n")
+                    displayText.append("🚗 车牌: ${smsInfo.plateNumber}\n")
+                    displayText.append("⚠️  违法: ${smsInfo.violation}\n")
+                    displayText.append("📱 内容: ${smsInfo.body}\n")
+                    displayText.append("─".repeat(30) + "\n")
                 }
                 tvResult.text = displayText.toString()
             } else {
-                tvResult.text = "未找到12123发来的短信"
+                tvResult.text = "📭 未找到12123发来的短信"
             }
         }
     }
@@ -204,6 +212,59 @@ class MainActivity : AppCompatActivity() {
             startService(SmsMonitorService.getStartIntent(this))
         }
         Toast.makeText(this, "后台监控服务已启动", Toast.LENGTH_SHORT).show()
+    }
+    
+    /**
+     * 运行解析器测试
+     */
+    private fun runParserTests() {
+        lifecycleScope.launch {
+            val testResults = withContext(Dispatchers.IO) {
+                val result = StringBuilder()
+                
+                // 运行SmsParser测试
+                result.append("=== SmsParser 测试结果 ===\n\n")
+                
+                // 测试时间格式化
+                result.append("1. 时间格式化测试:\n")
+                val testTimestamp = 1672531200000L // 2023-01-01 00:00:00
+                val formattedTime = TimeFormatter.formatToChineseDateTime(testTimestamp)
+                result.append("   时间戳: $testTimestamp\n")
+                result.append("   格式化: $formattedTime\n")
+                result.append("   验证: ${if (formattedTime.contains("年") && formattedTime.contains("月") && formattedTime.contains("日")) "✅ 通过" else "❌ 失败"}\n\n")
+                
+                // 测试中文括号提取
+                result.append("2. 中文括号提取测试:\n")
+                val parser = SmsParser()
+                val testSms = "【豫A12345】在建设路未按规定停放已被记录，请立即驶离。"
+                val violation = parser.extractViolation(testSms)
+                val plateNumber = parser.extractPlateNumber(testSms)
+                result.append("   测试短信: $testSms\n")
+                result.append("   提取车牌: $plateNumber\n")
+                result.append("   提取违法: $violation\n")
+                result.append("   验证: ${if (plateNumber == "豫A12345") "✅ 通过" else "❌ 失败"}\n\n")
+                
+                // 测试相对时间
+                result.append("3. 相对时间测试:\n")
+                val now = System.currentTimeMillis()
+                val fiveMinutesAgo = now - 5 * 60 * 1000
+                val relativeTime = TimeFormatter.formatToRelativeTime(fiveMinutesAgo)
+                result.append("   5分钟前: $relativeTime\n")
+                result.append("   验证: ${if (relativeTime.contains("5分钟前")) "✅ 通过" else "❌ 失败"}\n\n")
+                
+                // 测试智能时间格式化
+                result.append("4. 智能时间格式化测试:\n")
+                val twoDaysAgo = now - 2 * 24 * 60 * 60 * 1000
+                val smartTime = TimeFormatter.formatSmart(twoDaysAgo)
+                result.append("   2天前: $smartTime\n")
+                result.append("   验证: ${if (smartTime == "前天" || smartTime.contains("月")) "✅ 通过" else "❌ 失败"}\n")
+                
+                result.toString()
+            }
+            
+            tvResult.text = testResults
+            Toast.makeText(this@MainActivity, "解析器测试完成", Toast.LENGTH_SHORT).show()
+        }
     }
     
     data class SmsInfo(
