@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MainActivity"
         private const val SMS_PERMISSION_REQUEST_CODE = 100
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 101
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
