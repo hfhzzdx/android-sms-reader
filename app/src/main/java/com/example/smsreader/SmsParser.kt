@@ -67,25 +67,25 @@ class SmsParser {
     
     /**
      * 从短信内容中提取违法行为
-     * 优先提取中文括号【】「」『』中的内容
+     * 1. 优先提取『』符号包裹的内容
+     * 2. 如果没有『』符号，检查是否包含"未按规定停放"或"停车"
+     * 3. 如果包含，则解析为"违法停车"
      */
     fun extractViolation(smsBody: String): String {
         return try {
-            // 1. 首先尝试提取中文括号中的内容
-            val bracketViolation = extractViolationFromChineseBrackets(smsBody)
-            if (bracketViolation.isNotEmpty()) {
-                return bracketViolation
+            // 1. 首先尝试提取『』符号包裹的内容
+            val doubleAngleBracketViolation = extractViolationFromDoubleAngleBrackets(smsBody)
+            if (doubleAngleBracketViolation.isNotEmpty()) {
+                return doubleAngleBracketViolation
             }
             
-            // 2. 查找违法行为关键词
-            VIOLATION_KEYWORDS.forEach { keyword ->
-                if (smsBody.contains(keyword)) {
-                    return extractViolationContext(smsBody, keyword)
-                }
+            // 2. 如果没有『』符号，检查是否包含特定关键词
+            if (containsParkingKeywords(smsBody)) {
+                return "违法停车"
             }
             
-            // 3. 如果没有找到关键词，尝试提取"已被记录"附近的内容
-            extractViolationFromRecord(smsBody)
+            // 3. 最后尝试其他提取方法
+            extractViolationFallback(smsBody)
         } catch (e: Exception) {
             Log.e(TAG, "提取违法行为失败", e)
             "未知违法行为"
@@ -104,39 +104,74 @@ class SmsParser {
     }
     
     /**
-     * 从中文括号中提取违法行为
-     * 支持的中文括号：【】「」『』
+     * 专门提取『』符号包裹的内容
+     * 只提取『』符号，不提取其他括号
      */
-    private fun extractViolationFromChineseBrackets(smsBody: String): String {
-        // 定义中文括号的正则表达式
-        val chineseBracketPatterns = listOf(
-            Pattern.compile("【([^】]+)】"),      // 【内容】
-            Pattern.compile("「([^」]+)」"),      // 「内容」
-            Pattern.compile("『([^』]+)』"),      // 『内容』
-            Pattern.compile("《([^》]+)》"),      // 《内容》（虽然不是括号，但常见于正式文本）
-            Pattern.compile("（([^）]+)）")       // （内容）（圆括号）
+    private fun extractViolationFromDoubleAngleBrackets(smsBody: String): String {
+        // 只匹配『』符号
+        val doubleAngleBracketPattern = Pattern.compile("『([^』]+)』")
+        val matcher = doubleAngleBracketPattern.matcher(smsBody)
+        
+        if (matcher.find()) {
+            val content = matcher.group(1)?.trim() ?: ""
+            if (content.isNotEmpty()) {
+                return content
+            }
+        }
+        
+        return ""
+    }
+    
+    /**
+     * 检查是否包含停车相关关键词
+     */
+    private fun containsParkingKeywords(smsBody: String): Boolean {
+        val parkingKeywords = listOf(
+            "未按规定停放",
+            "停车"
         )
         
-        // 按优先级尝试匹配
-        for (pattern in chineseBracketPatterns) {
+        return parkingKeywords.any { smsBody.contains(it) }
+    }
+    
+    /**
+     * 备用提取方法（当没有『』符号且没有停车关键词时使用）
+     */
+    private fun extractViolationFallback(smsBody: String): String {
+        // 1. 尝试其他中文括号
+        val otherBrackets = listOf(
+            Pattern.compile("【([^】]+)】"),  // 【内容】
+            Pattern.compile("「([^」]+)」"),  // 「内容」
+            Pattern.compile("《([^》]+)》"),  // 《内容》
+            Pattern.compile("（([^）]+)）")   // （内容）
+        )
+        
+        for (pattern in otherBrackets) {
             val matcher = pattern.matcher(smsBody)
             if (matcher.find()) {
                 val content = matcher.group(1)?.trim() ?: ""
-                if (content.isNotEmpty() && isLikelyViolation(content)) {
+                if (content.isNotEmpty()) {
                     return content
                 }
             }
         }
         
-        // 如果没有找到合适的内容，尝试找到第一个括号内容
-        for (pattern in chineseBracketPatterns) {
-            val matcher = pattern.matcher(smsBody)
-            if (matcher.find()) {
-                return matcher.group(1)?.trim() ?: ""
+        // 2. 查找其他违法行为关键词
+        VIOLATION_KEYWORDS.forEach { keyword ->
+            if (smsBody.contains(keyword)) {
+                return extractViolationContext(smsBody, keyword)
             }
         }
         
-        return ""
+        // 3. 尝试提取"已被记录"附近的内容
+        val recordIndex = smsBody.indexOf("已被记录")
+        if (recordIndex > 0) {
+            val start = maxOf(0, recordIndex - 50)
+            val end = minOf(smsBody.length, recordIndex + 10)
+            return smsBody.substring(start, end).trim()
+        }
+        
+        return "未明确违法行为"
     }
     
     /**

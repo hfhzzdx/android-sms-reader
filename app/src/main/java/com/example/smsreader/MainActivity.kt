@@ -233,16 +233,30 @@ class MainActivity : AppCompatActivity() {
                 result.append("   格式化: $formattedTime\n")
                 result.append("   验证: ${if (formattedTime.contains("年") && formattedTime.contains("月") && formattedTime.contains("日")) "✅ 通过" else "❌ 失败"}\n\n")
                 
-                // 测试中文括号提取
-                result.append("2. 中文括号提取测试:\n")
+                // 测试新的违法行为解析逻辑
+                result.append("2. 违法行为解析测试:\n")
                 val parser = SmsParser()
-                val testSms = "【豫A12345】在建设路未按规定停放已被记录，请立即驶离。"
-                val violation = parser.extractViolation(testSms)
-                val plateNumber = parser.extractPlateNumber(testSms)
-                result.append("   测试短信: $testSms\n")
-                result.append("   提取车牌: $plateNumber\n")
-                result.append("   提取违法: $violation\n")
-                result.append("   验证: ${if (plateNumber == "豫A12345") "✅ 通过" else "❌ 失败"}\n\n")
+                
+                // 测试用例1：『』符号提取
+                val testSms1 = "『未按规定停放』您的车辆豫A12345在建设路已被记录。"
+                val violation1 = parser.extractViolation(testSms1)
+                result.append("   测试1（『』符号）: $testSms1\n")
+                result.append("   提取违法: $violation1\n")
+                result.append("   验证: ${if (violation1 == "未按规定停放") "✅ 通过" else "❌ 失败"}\n\n")
+                
+                // 测试用例2：停车关键词提取
+                val testSms2 = "豫B67890在中山路未按规定停放已被记录。"
+                val violation2 = parser.extractViolation(testSms2)
+                result.append("   测试2（停车关键词）: $testSms2\n")
+                result.append("   提取违法: $violation2\n")
+                result.append("   验证: ${if (violation2 == "违法停车") "✅ 通过" else "❌ 失败"}\n\n")
+                
+                // 测试用例3：优先级测试（『』符号优先）
+                val testSms3 = "『超速行驶』豫C24680在解放路停车已被记录。"
+                val violation3 = parser.extractViolation(testSms3)
+                result.append("   测试3（优先级）: $testSms3\n")
+                result.append("   提取违法: $violation3\n")
+                result.append("   验证: ${if (violation3 == "超速行驶") "✅ 通过" else "❌ 失败"}\n\n")
                 
                 // 测试相对时间
                 result.append("3. 相对时间测试:\n")

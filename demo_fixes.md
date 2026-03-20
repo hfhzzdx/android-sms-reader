@@ -30,21 +30,20 @@ TimeFormatter.formatSmart(timestamp)
 // 远时间：01月15日 14:30、2023年01月01日
 ```
 
-### 中文括号提取修复
-增强了 `SmsParser.kt` 的 `extractViolation` 方法：
+### 新的违法行为解析逻辑
+根据用户要求，更新了 `SmsParser.kt` 的 `extractViolation` 方法：
 
 ```kotlin
-// 支持的中文括号类型：
-// 【内容】 - 方头括号
-// 「内容」 - 尖括号
-// 『内容』 - 双尖括号
-// 《内容》 - 书名号
-// （内容） - 圆括号
-
-// 提取优先级：
-// 1. 先提取中文括号中的内容
-// 2. 如果无括号，使用关键词匹配
-// 3. 最后使用"已被记录"附近内容
+// 新的解析优先级：
+// 1. 优先提取『』符号包裹的内容
+//   例如：『未按规定停放』 → "未按规定停放"
+//   
+// 2. 如果没有『』符号，检查是否包含"未按规定停放"或"停车"
+//   如果包含，则解析为"违法停车"
+//   例如："未按规定停放" → "违法停车"
+//        "停车" → "违法停车"
+//   
+// 3. 最后使用其他提取方法（其他括号、关键词等）
 ```
 
 ## 测试用例
@@ -57,18 +56,29 @@ val formatted = TimeFormatter.formatToChineseDateTime(timestamp)
 // 结果：2023年01月01日 00:00:00（不是1672531200000）
 ```
 
-### 中文括号提取测试
+### 新的违法行为解析测试
 ```kotlin
-val testSms = "【豫A12345】在建设路未按规定停放已被记录"
 val parser = SmsParser()
 
-// 提取车牌
-val plateNumber = parser.extractPlateNumber(testSms)
-// 结果：豫A12345
+// 测试1：『』符号提取（最高优先级）
+val test1 = "『未按规定停放』您的车辆豫A12345在建设路已被记录。"
+val violation1 = parser.extractViolation(test1)
+// 结果：未按规定停放（从『』符号中提取）
 
-// 提取违法行为
-val violation = parser.extractViolation(testSms)
-// 结果：未按规定停放（从括号中提取）
+// 测试2：停车关键词提取
+val test2 = "豫B67890在中山路未按规定停放已被记录。"
+val violation2 = parser.extractViolation(test2)
+// 结果：违法停车（检测到"未按规定停放"关键词）
+
+// 测试3：优先级测试
+val test3 = "『超速行驶』豫C24680在解放路停车已被记录。"
+val violation3 = parser.extractViolation(test3)
+// 结果：超速行驶（『』符号优先于停车关键词）
+
+// 测试4：其他情况
+val test4 = "豫D13579在长江路违反交通信号灯已被记录。"
+val violation4 = parser.extractViolation(test4)
+// 结果：违反交通信号灯（使用其他提取方法）
 ```
 
 ## 界面变化

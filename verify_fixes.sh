@@ -41,18 +41,24 @@ fi
 
 echo ""
 
-# 检查中文括号提取
-echo "3. 检查中文括号提取修复:"
-if grep -q "extractViolationFromChineseBrackets" "app/src/main/java/com/example/smsreader/SmsParser.kt"; then
-    echo "  ✅ SmsParser实现了中文括号提取"
+# 检查新的违法行为解析逻辑
+echo "3. 检查新的违法行为解析逻辑:"
+if grep -q "extractViolationFromDoubleAngleBrackets" "app/src/main/java/com/example/smsreader/SmsParser.kt"; then
+    echo "  ✅ SmsParser实现了『』符号提取"
 else
-    echo "  ❌ SmsParser未实现中文括号提取"
+    echo "  ❌ SmsParser未实现『』符号提取"
 fi
 
-if grep -q "【】\|「」\|『』" "app/src/main/java/com/example/smsreader/SmsParser.kt"; then
-    echo "  ✅ SmsParser包含中文括号正则表达式"
+if grep -q "containsParkingKeywords" "app/src/main/java/com/example/smsreader/SmsParser.kt"; then
+    echo "  ✅ SmsParser实现了停车关键词检查"
 else
-    echo "  ❌ SmsParser不包含中文括号正则表达式"
+    echo "  ❌ SmsParser未实现停车关键词检查"
+fi
+
+if grep -q 'return "违法停车"' "app/src/main/java/com/example/smsreader/SmsParser.kt"; then
+    echo "  ✅ SmsParser包含'违法停车'解析逻辑"
+else
+    echo "  ❌ SmsParser不包含'违法停车'解析逻辑"
 fi
 
 echo ""
