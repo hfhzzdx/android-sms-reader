@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.Cursor
 import android.provider.Telephony
 import android.util.Log
+import com.example.smsreader.model.SmsInfo
 
 /**
  * 短信读取助手
@@ -16,7 +17,7 @@ object SmsReaderHelper {
      * 读取12123短信
      * 支持发件人为12123401或以12123开头
      */
-    fun readSmsFrom12123(context: Context): List<SmsInfo> {
+    fun readSmsFrom12123(context: Context): List<com.example.smsreader.model.SmsInfo> {
         val smsList = mutableListOf<SmsInfo>()
         
         try {
@@ -91,7 +92,7 @@ object SmsReaderHelper {
     /**
      * 获取指定车牌号的违章记录
      */
-    fun getViolationsByPlateNumber(context: Context, plateNumber: String): List<SmsInfo> {
+    fun getViolationsByPlateNumber(context: Context, plateNumber: String): List<com.example.smsreader.model.SmsInfo> {
         return readSmsFrom12123(context)
             .filter { it.plateNumber == plateNumber }
     }
@@ -99,7 +100,7 @@ object SmsReaderHelper {
     /**
      * 获取今天的违章记录
      */
-    fun getTodayViolations(context: Context): List<SmsInfo> {
+    fun getTodayViolations(context: Context): List<com.example.smsreader.model.SmsInfo> {
         val today = System.currentTimeMillis()
         val oneDay = 24 * 60 * 60 * 1000L
         

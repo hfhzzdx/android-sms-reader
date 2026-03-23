@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smsreader.adapter.ViolationAdapter
+import com.example.smsreader.model.SmsInfo
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,7 @@ class MainActivityOptimized : AppCompatActivity() {
     private lateinit var violationAdapter: ViolationAdapter
     
     // 数据
-    private val violationList = mutableListOf<SmsInfo>()
+    private val violationList = mutableListOf<com.example.smsreader.model.SmsInfo>()
     
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -308,7 +309,7 @@ class MainActivityOptimized : AppCompatActivity() {
     /**
      * 显示违章详情
      */
-    private fun showViolationDetail(smsInfo: SmsInfo) {
+    private fun showViolationDetail(smsInfo: com.example.smsreader.model.SmsInfo) {
         val detailText = """
             📅 时间: ${TimeFormatter.formatToChineseDateTime(smsInfo.date)}
             🚗 车牌: ${smsInfo.plateNumber}

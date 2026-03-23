@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.smsreader.model.SmsInfo
 import androidx.lifecycle.lifecycleScope
 
 import kotlinx.coroutines.Dispatchers
@@ -148,8 +149,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    private fun readSmsFrom12123(): List<SmsInfo> {
-        val smsList = mutableListOf<SmsInfo>()
+    private fun readSmsFrom12123(): List<com.example.smsreader.model.SmsInfo> {
+        val smsList = mutableListOf<com.example.smsreader.model.SmsInfo>()
         val uri = Telephony.Sms.CONTENT_URI
         val projection = arrayOf(
             Telephony.Sms._ID,
@@ -281,11 +282,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    data class SmsInfo(
-        val address: String,
-        val body: String,
-        val date: Long,
-        val plateNumber: String,
-        val violation: String
-    )
+
 }
