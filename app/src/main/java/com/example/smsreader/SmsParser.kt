@@ -212,10 +212,11 @@ class SmsParser {
     
     /**
      * 判断是否为12123的违章短信
+     * 支持发件人为12123401或以12123开头
      */
     fun isTrafficViolationSms(sender: String, body: String): Boolean {
-        // 检查发件人是否为12123开头
-        if (!sender.startsWith("12123")) {
+        // 检查发件人是否为12123401或以12123开头
+        if (sender != "12123401" && !sender.startsWith("12123")) {
             return false
         }
         
