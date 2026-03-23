@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -42,7 +43,7 @@ class MainActivityOptimized : AppCompatActivity() {
     private lateinit var btnTestParser: MaterialButton
     private lateinit var btnSettings: MaterialButton
     private lateinit var recyclerRecords: RecyclerView
-    private lateinit var layoutEmpty: androidx.constraintlayout.widget.ConstraintLayout
+    private lateinit var layoutEmpty: LinearLayout
     
     // 适配器
     private lateinit var violationAdapter: ViolationAdapter
