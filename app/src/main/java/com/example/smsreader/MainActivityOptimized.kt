@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.app.ActivityManager
 import android.content.Context
-
+import android.app.ActivityManager
+import android.content.Context
 
 /**
  * 优化后的主界面
@@ -51,12 +52,22 @@ class MainActivityOptimized : AppCompatActivity() {
     // 数据
     private val violationList = mutableListOf<com.example.smsreader.model.SmsInfo>()
     
+    
+     /**
+     * 检查服务是否正在运行
+     */
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        return manager.getRunningServices(Integer.MAX_VALUE).any { 
-            it.service.className == serviceClass.name 
+        return try {
+            val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            manager.getRunningServices(Int.MAX_VALUE).any { 
+                it.service.className == serviceClass.name 
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
+   
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
