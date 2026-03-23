@@ -21,8 +21,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.app.ActivityManager
 import android.content.Context
-import android.app.ActivityManager
-import android.content.Context
 
 /**
  * 优化后的主界面
@@ -58,7 +56,7 @@ class MainActivityOptimized : AppCompatActivity() {
      */
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
         return try {
-            val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val manager = getSystemService(android.content.Context.ACTIVITY_SERVICE) as android.app.ActivityManager
             manager.getRunningServices(Int.MAX_VALUE).any { 
                 it.service.className == serviceClass.name 
             }
@@ -67,7 +65,7 @@ class MainActivityOptimized : AppCompatActivity() {
             false
         }
     }
-   
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
