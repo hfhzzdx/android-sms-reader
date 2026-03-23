@@ -18,6 +18,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.app.ActivityManager
+import android.content.Context
+
 
 /**
  * 优化后的主界面
@@ -47,6 +50,13 @@ class MainActivityOptimized : AppCompatActivity() {
     // 数据
     private val violationList = mutableListOf<SmsInfo>()
     
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        return manager.getRunningServices(Integer.MAX_VALUE).any { 
+            it.service.className == serviceClass.name 
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_optimized)
