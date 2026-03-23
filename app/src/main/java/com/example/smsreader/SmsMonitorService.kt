@@ -1,5 +1,6 @@
 package com.example.smsreader
 
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -18,6 +19,21 @@ class SmsMonitorService : Service() {
         
         fun getStartIntent(context: Context): Intent {
             return Intent(context, SmsMonitorService::class.java)
+        }
+        
+        /**
+         * 检查服务是否正在运行
+         */
+        fun isServiceRunning(context: Context): Boolean {
+            return try {
+                val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                manager.getRunningServices(Int.MAX_VALUE).any { 
+                    it.service.className == SmsMonitorService::class.java.name
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
         }
     }
     

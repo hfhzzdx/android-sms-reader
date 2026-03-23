@@ -51,20 +51,7 @@ class MainActivityOptimized : AppCompatActivity() {
     private val violationList = mutableListOf<com.example.smsreader.model.SmsInfo>()
     
     
-     /**
-     * 检查服务是否正在运行
-     */
-    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        return try {
-            val manager = getSystemService(android.content.Context.ACTIVITY_SERVICE) as android.app.ActivityManager
-            manager.getRunningServices(Int.MAX_VALUE).any { 
-                it.service.className == serviceClass.name 
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
+ 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
